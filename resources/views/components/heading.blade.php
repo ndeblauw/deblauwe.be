@@ -15,14 +15,26 @@ $classes = [
 ]
 @endphp
 
-<?php switch ((int) $level): case(1): ?>
+@php
+    switch ((int) $level): case(1):
+@endphp
     <h1 {{ $attributes->class($classes) }} data-heading>{{ $slot }}</h1>
-<?php break; case(2): ?>
+@php
+    break; case(2):
+@endphp
     <h2 {{ $attributes->class($classes) }} data-heading>{{ $slot }}</h2>
-<?php break; case(3): ?>
+@php
+    break; case(3):
+@endphp
     <h3 {{ $attributes->class($classes) }} data-heading>{{ $slot }}</h3>
-<?php break; case(4): ?>
+@php
+    break; case(4):
+@endphp
     <h4 {{ $attributes->class($classes) }} data-heading>{{ $slot }}</h4>
-<?php break; default: ?>
+@php
+    break; default:
+@endphp
     <div {{ $attributes->class($classes) }} data-heading>{{ $slot }}</div>
-<?php endswitch; ?>
+@php
+    endswitch
+@endphp
