@@ -19,12 +19,18 @@ $classes = [
 ];
 @endphp
 
-<?php if ($label): ?>
+@php
+    if ($label):
+@endphp
 <x-field>
     <x-label :for="$id" :value="$label" />
     <input {{ $formControlAttributes }} {{ $attributes->class($classes) }} value="{{ $value }}">
     <x-error :for="$id" />
 </x-field>
-<?php else: ?>
+@php
+    else:
+@endphp
 <input {{ $formControlAttributes }} {{ $attributes->class($classes) }} value="{{ $value }}">
-<?php endif; ?>
+@php
+    endif
+@endphp

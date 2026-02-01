@@ -13,7 +13,9 @@ $classes = [
 ];
 @endphp
 
-<?php if ($label): ?>
+@php
+    if ($label):
+@endphp
 <div class="flex items-center gap-x-2.5">
     <div class="group grid size-5 grid-cols-1">
         <input type="checkbox" {{ $formControlAttributes }} value="{{ $value }}" {{ $attributes->class($classes) }}>
@@ -24,7 +26,9 @@ $classes = [
     </div>
     <x-label :for="$id" :value="$label" />
 </div>
-<?php else: ?>
+@php
+    else:
+@endphp
 <div class="group grid size-5 grid-cols-1">
     <input type="checkbox" {{ $formControlAttributes }} value="{{ $value }}" {{ $attributes->class($classes) }}>
     <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25" viewBox="0 0 14 14" fill="none">
@@ -32,4 +36,6 @@ $classes = [
         <path class="opacity-0 group-has-indeterminate:opacity-100" d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
     </svg>
 </div>
-<?php endif; ?>
+@php
+    endif
+@endphp

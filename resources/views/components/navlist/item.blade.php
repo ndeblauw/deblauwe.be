@@ -21,17 +21,33 @@
         'secondary' => 'aria-current:bg-gray-800/[4%] dark:aria-current:bg-white/[7%]',
     },
 ]) }}>
-    <?php if (is_string($before) && $before !== ''): ?>
+    @php
+    if (is_string($before) && $before !== ''):
+@endphp
         <x-dynamic-component :component="$before" aria-hidden="true" width="16" height="16" class="shrink-0" />
-    <?php else: ?>
+    @php
+    else:
+@endphp
         {{ $before }}
-    <?php endif; ?>
-    <?php if ($slot->isNotEmpty()): ?>
+    @php
+    endif
+@endphp
+    @php
+    if ($slot->isNotEmpty()):
+@endphp
         <div class="flex-1 text-sm font-medium leading-none whitespace-nowrap">{{ $slot }}</div>
-    <?php endif; ?>
-    <?php if (is_string($after) && $after !== ''): ?>
+    @php
+    endif
+@endphp
+    @php
+    if (is_string($after) && $after !== ''):
+@endphp
         <x-dynamic-component :component="$after" aria-hidden="true" width="16" height="16" class="shrink-0 ml-1" />
-    <?php else: ?>
+    @php
+    else:
+@endphp
         {{ $after }}
-    <?php endif; ?>
+    @php
+    endif
+@endphp
 </a>
