@@ -49,32 +49,62 @@ $classes = [
 @endphp
 
 {{-- It's important that this file does NOT have a newline at the end. --}}
-<?php if ($href): ?>
+@php
+    if ($href):
+@endphp
   <a href="{{ $href }}" {{ $attributes->class($classes) }}>
-    <?php if (is_string($before) && $before !== ''): ?>
+    @php
+    if (is_string($before) && $before !== ''):
+@endphp
         <x-dynamic-component :component="$before" aria-hidden="true" width="20" height="20" class="shrink-0 opacity-80 group-hover:opacity-100 -ml-0.5" />
-    <?php else: ?>
+    @php
+    else:
+@endphp
         {{ $before }}
-    <?php endif; ?>
+    @php
+    endif
+@endphp
     {{ $slot }}
-    <?php if (is_string($after) && $after !== ''): ?>
+    @php
+    if (is_string($after) && $after !== ''):
+@endphp
         <x-dynamic-component :component="$after" aria-hidden="true" width="20" height="20" class="shrink-0 opacity-80 group-hover:opacity-100 -mr-0.5" />
-    <?php else: ?>
+    @php
+    else:
+@endphp
         {{ $after }}
-    <?php endif; ?>
+    @php
+    endif
+@endphp
   </a>
-<?php else: ?>
+@php
+    else:
+@endphp
   <button {{ $attributes->class($classes) }}>
-    <?php if (is_string($before) && $before !== ''): ?>
+    @php
+    if (is_string($before) && $before !== ''):
+@endphp
         <x-dynamic-component :component="$before" aria-hidden="true" width="20" height="20" class="shrink-0 opacity-80 group-hover:opacity-100 -ml-0.5" />
-    <?php else: ?>
+    @php
+    else:
+@endphp
         {{ $before }}
-    <?php endif; ?>
+    @php
+    endif
+@endphp
     {{ $slot }}
-    <?php if (is_string($after) && $after !== ''): ?>
+    @php
+    if (is_string($after) && $after !== ''):
+@endphp
         <x-dynamic-component :component="$after" aria-hidden="true" width="20" height="20" class="shrink-0 opacity-80 group-hover:opacity-100 -mr-0.5" />
-    <?php else: ?>
+    @php
+    else:
+@endphp
         {{ $after }}
-    <?php endif; ?>
+    @php
+    endif
+@endphp
   </button>
-<?php endif; ?>
+@php
+    endif
+@endphp

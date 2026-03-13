@@ -13,17 +13,33 @@
     'aria-current:after:bg-(--color-accent-content)',
     $slot->isNotEmpty() ? 'px-3' : 'size-10',
 ]) }}>
-    <?php if (is_string($before) && $before !== ''): ?>
+    @php
+    if (is_string($before) && $before !== ''):
+@endphp
         <x-dynamic-component :component="$before" aria-hidden="true" width="20" height="20" class="shrink-0" />
-    <?php else: ?>
+    @php
+    else:
+@endphp
         {{ $before }}
-    <?php endif; ?>
-    <?php if ($slot->isNotEmpty()): ?>
+    @php
+    endif
+@endphp
+    @php
+    if ($slot->isNotEmpty()):
+@endphp
         <div class="flex-1 text-sm font-medium leading-none whitespace-nowrap [[data-nav-footer]_&]:hidden [[data-nav-sidebar]_[data-nav-footer]_&]:block">{{ $slot }}</div>
-    <?php endif; ?>
-    <?php if (is_string($after) && $after !== ''): ?>
+    @php
+    endif
+@endphp
+    @php
+    if (is_string($after) && $after !== ''):
+@endphp
         <x-dynamic-component :component="$after" aria-hidden="true"  width="20" height="20" class="shrink-0 ml-1" />
-    <?php else: ?>
+    @php
+    else:
+@endphp
         {{ $after }}
-    <?php endif; ?>
+    @php
+    endif
+@endphp
 </a>
