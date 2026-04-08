@@ -13,36 +13,74 @@ $classes = [
 ];
 @endphp
 
-<?php if ($href): ?>
+@php
+    if ($href):
+@endphp
     <a href="{{ $href }}" {{ $attributes->class($classes) }}>
-        <?php if (is_string($before) && $before !== ''): ?>
+        @php
+    if (is_string($before) && $before !== ''):
+@endphp
             <x-dynamic-component :component="$before" aria-hidden="true" width="20" height="20" class="shrink-0 mr-2 text-gray-400 group-hover:text-current" />
-        <?php else: ?>
+        @php
+    else:
+@endphp
             {{ $before }}
-        <?php endif; ?>
-        <?php if ($slot->isNotEmpty()): ?>
+        @php
+    endif
+@endphp
+        @php
+    if ($slot->isNotEmpty()):
+@endphp
             <div class="flex-1 text-sm font-medium leading-none whitespace-nowrap">{{ $slot }}</div>
-        <?php endif; ?>
-        <?php if (is_string($after) && $after !== ''): ?>
+        @php
+    endif
+@endphp
+        @php
+    if (is_string($after) && $after !== ''):
+@endphp
             <x-dynamic-component :component="$after" aria-hidden="true" width="20" height="20" class="shrink-0 ml-2 text-gray-400 group-hover:text-current" />
-        <?php else: ?>
+        @php
+    else:
+@endphp
             {{ $after }}
-        <?php endif; ?>
+        @php
+    endif
+@endphp
     </a>
-<?php else: ?>
+@php
+    else:
+@endphp
     <button {{ $attributes->class($classes) }}>
-        <?php if (is_string($before) && $before !== ''): ?>
+        @php
+    if (is_string($before) && $before !== ''):
+@endphp
             <x-dynamic-component :component="$before" aria-hidden="true" width="20" height="20" class="shrink-0 mr-2 text-gray-400 group-hover:text-current" />
-        <?php else: ?>
+        @php
+    else:
+@endphp
             {{ $before }}
-        <?php endif; ?>
-        <?php if ($slot->isNotEmpty()): ?>
+        @php
+    endif
+@endphp
+        @php
+    if ($slot->isNotEmpty()):
+@endphp
             <div class="flex-1 text-sm font-medium leading-none whitespace-nowrap">{{ $slot }}</div>
-        <?php endif; ?>
-        <?php if (is_string($after) && $after !== ''): ?>
+        @php
+    endif
+@endphp
+        @php
+    if (is_string($after) && $after !== ''):
+@endphp
             <x-dynamic-component :component="$after" aria-hidden="true" width="20" height="20" class="shrink-0 ml-2 text-gray-400 group-hover:text-current" />
-        <?php else: ?>
+        @php
+    else:
+@endphp
             {{ $after }}
-        <?php endif; ?>
+        @php
+    endif
+@endphp
     </button>
-<?php endif; ?>
+@php
+    endif
+@endphp
