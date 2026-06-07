@@ -9,3 +9,4 @@ Route::redirect('dokter', 'https://gvhv.us13.list-manage.com/track/click?u=8dba7
 
 Route::redirect('paasvakantie', 'https://bluepundit.notion.site/Fuerteventura-paasvakantie-2dd28ba3235d801a8017d70190427372');
 
+Route::redirect('merel/5nw', 'https://bluepundit.notion.site/NW-juni-examen-37728ba3235d80458af8ef3db93361e0');
