@@ -12,3 +12,5 @@ Route::redirect('paasvakantie', 'https://bluepundit.notion.site/Fuerteventura-pa
 Route::redirect('merel/5nw', 'https://bluepundit.notion.site/NW-juni-examen-37728ba3235d80458af8ef3db93361e0');
 Route::redirect('aster/4bio', 'https://bluepundit.notion.site/Bio-juni-4de-37928ba3235d8013801acdea63e045cb');
 
+Route::redirect('merel/5filo', 'https://bluepundit.notion.site/Vakantietaak-filosofie-3a628ba3235d80e09113c61982605e31?pvs=73');
+
