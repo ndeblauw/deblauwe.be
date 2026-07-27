@@ -1,0 +1,641 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zomerplaylists — doorzoekbaar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2b30;
+    --ink-soft:#5b6b70;
+    --paper:#f1ece2;
+    --card:#faf7f1;
+    --line:#ddd4c5;
+    --line-soft:#e7dfd2;
+    --marine:#1f5c6b;
+    --amber:#e4933b;
+    --hl:#fff3d6;
+    --focus:#1f5c6b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,sans-serif;
+    font-size:15px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 80px}
+
+  header.masthead{
+    display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+    gap:16px 24px;padding-bottom:18px;border-bottom:2px solid var(--ink);
+  }
+  .title-block h1{
+    font-family:"Space Grotesk",sans-serif;
+    font-weight:700;font-size:clamp(28px,5vw,44px);
+    letter-spacing:-.02em;margin:0;line-height:1;
+  }
+  .title-block p{
+    margin:8px 0 0;color:var(--ink-soft);max-width:52ch;font-size:14px;
+  }
+  .stat{
+    font-family:"Space Mono",monospace;
+    text-align:right;line-height:1.2;white-space:nowrap;
+  }
+  .stat .big{font-size:30px;font-weight:700;color:var(--marine)}
+  .stat .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+
+  .controls{
+    position:sticky;top:0;z-index:30;background:var(--paper);
+    padding:16px 0 12px;margin-top:4px;
+  }
+  .searchrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .field{position:relative;flex:1 1 260px;min-width:0}
+  .field svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5}
+  #global{
+    width:100%;padding:12px 14px 12px 38px;
+    font-family:"Space Grotesk",sans-serif;font-size:16px;
+    background:var(--card);color:var(--ink);
+    border:1.5px solid var(--line);border-radius:10px;
+  }
+  #global::placeholder{color:#9aa5a0}
+  #global:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 3px rgba(31,92,107,.15)}
+  .clearbtn{
+    font-family:"Space Mono",monospace;font-size:12px;letter-spacing:.08em;
+    text-transform:uppercase;cursor:pointer;
+    background:transparent;border:1.5px solid var(--line);border-radius:10px;
+    color:var(--ink-soft);padding:11px 14px;white-space:nowrap;
+  }
+  .clearbtn:hover{border-color:var(--ink);color:var(--ink)}
+  .clearbtn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+  .tablecard{
+    background:var(--card);border:1.5px solid var(--line);border-radius:12px;
+    overflow:hidden;margin-top:14px;
+  }
+  .scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  thead th{
+    position:sticky;top:0;background:var(--card);z-index:5;
+    text-align:left;padding:0;border-bottom:1.5px solid var(--ink);
+  }
+  .th-inner{
+    display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;
+    padding:14px 14px 8px;
+    font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:12px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink);
+  }
+  .th-inner:hover{color:var(--marine)}
+  .th-inner .arrow{font-family:"Space Mono",monospace;font-size:12px;color:var(--marine);opacity:0;transition:opacity .12s}
+  th.sorted .th-inner .arrow{opacity:1}
+  .th-filterwrap{padding:0 10px 12px}
+  .colfilter{
+    width:100%;padding:7px 10px;font-size:13px;font-family:"Inter",sans-serif;
+    background:var(--paper);color:var(--ink);
+    border:1.5px solid var(--line-soft);border-radius:7px;
+  }
+  .colfilter::placeholder{color:#a7b0ab;font-style:italic}
+  .colfilter:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 2px rgba(31,92,107,.15)}
+
+  tbody td{padding:9px 14px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:#f2ede3}
+  .col-num{width:52px;font-family:"Space Mono",monospace;font-size:12px;color:var(--ink-soft);text-align:right;padding-right:16px}
+  .t-title{font-weight:500;color:var(--ink)}
+  .t-artist{color:var(--ink-soft)}
+  .chip{
+    display:inline-block;padding:3px 9px;border-radius:999px;
+    font-family:"Space Mono",monospace;font-size:11.5px;font-weight:700;
+    color:#fff;white-space:nowrap;letter-spacing:.01em;
+  }
+  a.chip{text-decoration:none;cursor:pointer;transition:transform .1s,box-shadow .1s,filter .1s}
+  a.chip:hover{filter:brightness(1.06);box-shadow:0 2px 9px rgba(0,0,0,.2);transform:translateY(-1px)}
+  a.chip:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  a.tlink{color:inherit;text-decoration:none;border-bottom:1px solid transparent;transition:color .1s,border-color .1s}
+  a.tlink:hover{color:var(--marine);border-bottom-color:rgba(31,92,107,.4)}
+  a.tlink:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+  .play{display:inline-block;margin-left:7px;font-size:9px;color:var(--marine);opacity:0;transform:translateX(-3px);transition:opacity .12s,transform .12s;vertical-align:middle}
+  a.tlink:hover .play,a.tlink:focus-visible .play{opacity:1;transform:translateX(0)}
+  mark{background:var(--hl);color:inherit;border-radius:2px;padding:0 1px}
+
+  .empty{padding:48px 20px;text-align:center;color:var(--ink-soft)}
+  .empty strong{display:block;font-family:"Space Grotesk",sans-serif;color:var(--ink);font-size:17px;margin-bottom:4px}
+
+  footer{margin-top:22px;font-size:12px;color:var(--ink-soft);font-family:"Space Mono",monospace;letter-spacing:.03em}
+
+  @media (max-width:560px){
+    .col-num{display:none}
+    tbody td,.th-inner,.th-filterwrap{padding-left:12px;padding-right:12px}
+    body{font-size:14px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="title-block">
+      <h1>Zomerplaylists</h1>
+      <p>Negen jaar Nederlandstalige zomer-roadtrips (2017&ndash;2025), samengevoegd tot één doorzoekbare lijst. Zoek in elke kolom apart, of gebruik het grote veld om alles tegelijk te doorzoeken.</p>
+    </div>
+    <div class="stat">
+      <div class="big" id="count">271</div>
+      <div class="lbl">van 271 nummers</div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="searchrow">
+      <div class="field">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
+        <input id="global" type="search" placeholder="Zoek in alles — titel, artiest, playlist…" autocomplete="off">
+      </div>
+      <button class="clearbtn" id="clear" type="button">Wis alles</button>
+    </div>
+  </div>
+
+  <div class="tablecard">
+    <div class="scroll">
+      <table aria-label="Nummers uit alle playlists">
+        <thead>
+          <tr>
+            <th class="col-num"><div class="th-inner" data-key="n">#<span class="arrow"></span></div></th>
+            <th><div class="th-inner" data-key="p">Playlist <span class="arrow"></span></div>
+                <div class="th-filterwrap"><input class="colfilter" data-col="p" type="search" placeholder="filter playlist" autocomplete="off"></div></th>
+            <th><div class="th-inner" data-key="t">Titel <span class="arrow"></span></div>
+                <div class="th-filterwrap"><input class="colfilter" data-col="t" type="search" placeholder="filter titel" autocomplete="off"></div></th>
+            <th><div class="th-inner" data-key="a">Artiest <span class="arrow"></span></div>
+                <div class="th-filterwrap"><input class="colfilter" data-col="a" type="search" placeholder="filter artiest" autocomplete="off"></div></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty" hidden>
+      <strong>Geen nummers gevonden</strong>
+      Pas je zoekterm of filters aan.
+    </div>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const PLAYLISTS = [
+  {name:"zomer2017.fr",     color:"#E8913B", id:"3263369482"},
+  {name:"zomer2018.es/fr",  color:"#D6503F", id:"4716938464"},
+  {name:"Zomer2019.de",     color:"#C64B86", id:"6288359044"},
+  {name:"Zomer2020.no",     color:"#8A5CC0", id:"7932643642"},
+  {name:"Zomer2021.be",     color:"#4666C4", id:"9310049982"},
+  {name:"Zomer2022.fr",     color:"#2E86C1", id:"10559525842"},
+  {name:"Zomer2023.se",     color:"#17A0A0", id:"11565797184"},
+  {name:"Zomer2024.fr",     color:"#3FA14B", id:"12959938463"},
+  {name:"Zomer2025.at",     color:"#97952B", id:"14132451861"}
+];
+
+// [playlistIndex, title, artist]
+const RAW = [
+[0,"Je bent een vriend van mij","Arno Hintjens"],
+[0,"Op Een Onbewoond Eiland","Kinderen Voor Kinderen"],
+[0,"Belgie (Is er leven op Pluto ...) (Remaster)","Het Goede Doel"],
+[0,"Een doodgewone jongen","Bram Vermeulen"],
+[0,"Zwembad","Flip Kowlier"],
+[0,"Dorothea","Laïs"],
+[0,"Eindelijk vrij","Rob De Nijs"],
+[0,"Laat Het Gras Maar Groeien","Sam Gooris"],
+[0,"Lekker westers","Arbeid Adelt!"],
+[0,"Denk Je Soms Nog Aan Mij","Bart Peeters"],
+[0,"Amsterdam","Kris de Bruyne & Band"],
+[0,"Lekker Beest","A. Isabella"],
+[0,"De Zwemmer","De Nieuwe Snaar"],
+[0,"De Marie-Louise","Bart Kaell"],
+[0,"Irene","De Mens"],
+[0,"Papa","Stef Bos"],
+[0,"Heyah Mama","K3"],
+[0,"Mia","Gorki"],
+[0,"Twee meisjes","Raymond Van Het Groenewoud"],
+[0,"Ik Stap Eruit","Günther Neefs"],
+[0,"Ik Wil De Wereld Zien","Johan Verminnen"],
+[0,"Kei Kei Keileuke Zomer","Samson & Gert"],
+[0,"Ticket Naar De Zon","Superdiesel"],
+[0,"Bagagedrager","Gers Pardoel"],
+[0,"Ooit zal ik gaan","Vajen van den Bosch"],
+[0,"Als ze lacht","Yevgueni"],
+[0,"Fiets","Clouseau"],
+[0,"Regenboog","Mama's Jasje"],
+[0,"Cous-cous kreten","De Kreuners"],
+[0,"Ik Hou Van U","Noordkaap"],
+
+[1,"Allemaal","Wim Soutaer"],
+[1,"Blauw","The Scene"],
+[1,"De Aarde (Live)","Urbanus"],
+[1,"Één Kopje Koffie","V.O.F. De Kunst"],
+[1,"Eén Been Op De Stoep","Kinderen Voor Kinderen"],
+[1,"Toverdrank","Guido Belcanto"],
+[1,"Porselein","Yasmine"],
+[1,"Fantastig Toch","Eva De Roovere"],
+[1,"Ploegsteert","Het Zesde Metaal"],
+[1,"Sweet Caroline","CHRISTOFF"],
+[1,"Louise","Gers Pardoel"],
+[1,"Altijd Nooit Meer","Hannelore Bedert"],
+[1,"Middellandse Zee (Single Version)","Buurman"],
+[1,"De Ebbenhout blues","Wigbert"],
+[1,"Twee paar Poten & een Staart","Bart Peeters"],
+[1,"Ik Schreeuw Het Van De Daken (Après Ski Versie)","Yves Segers"],
+[1,"Ijsje vanille","De Nieuwe Snaar"],
+[1,"De Goudvis","senne guns"],
+[1,"Ruimtevaarder","Kommil Foo"],
+[1,"Met De Trein Naar Oostende","Spring"],
+[1,"Hè hè","Jan De Wilde"],
+[1,"Propere ruiten","Yevgueni"],
+[1,"Vlaanderen boven","Raymond Van Het Groenewoud"],
+[1,"Op het dak van de wereld","Dana Winner"],
+[1,"Koning Liefde","Tourist LeMC"],
+[1,"Alle Mooie Mannen Zijn Zo Lelijk (Als Ik Je Zie)","Margriet Hermans"],
+[1,"Zeg Eens Meisje","Paul Severs"],
+[1,"Volle maan","Leopold 3"],
+[1,"Maandag","De Mens"],
+[1,"Ik Voel Me Goed","Johan Verminnen"],
+
+[2,"Hilversum III (Live)","Herman van Veen"],
+[2,"Zoutelande (feat. Geike)","Bløf"],
+[2,"Annabel","Hans de Booij"],
+[2,"Leef","André Hazes Jr."],
+[2,"Kvraagetaan","Fixkes"],
+[2,"Pastorale (Remastered)","Liesbeth List"],
+[2,"Iedereen Is Van De Wereld","The Scene"],
+[2,"Alles is op","Samson & Gert"],
+[2,"De fanfare van honger en dorst","Jan De Wilde"],
+[2,"Dromen Zijn Bedrog","Marco Borsato"],
+[2,"Meisjes","Raymond Van Het Groenewoud"],
+[2,"Ooit Was Ik Een Soldaat","Gorki"],
+[2,"Eenzaam Met Jou","Yevgueni"],
+[2,"Louise","Clouseau"],
+[2,"Tim","Wim De Craene"],
+[2,"K3 Airlines","K3"],
+[2,"Mooi Weer Vandaag","Bart Kaell"],
+[2,"Naar De Wuppe","Het Zesde Metaal"],
+[2,"De Wereld Is Om Zeep","Urbanus"],
+[2,"Lachen en mooi zijn","De Mens"],
+[2,"Laat Me Je Lied Zijn","Eva De Roovere"],
+[2,"Wacht Maar Tot Ik Koning Ben","Paul van Gorcum"],
+[2,"Dag Vreemde Man","Free Souffriau"],
+[2,"Ademruimte","Hannelore Bedert"],
+[2,"De Wifi Song","Bart Peeters"],
+[2,"En Route","Tourist LeMC"],
+[2,"Welgemeende","Flip Kowlier"],
+[2,"De fotografie","De Nieuwe Snaar"],
+[2,"De Radio","Stef Bos"],
+[2,"Ik Neem Je Mee","Gers Pardoel"],
+
+[3,"Hupsakee!","Kinderen Voor Kinderen"],
+[3,"Suzanne","V.O.F. De Kunst"],
+[3,"Wespen Op De Appeltaart","Spinvis"],
+[3,"Onzin","Bram Vermeulen"],
+[3,"Goud","Bazart"],
+[3,"Soldiers Of Love","Liliane Saint-Pierre"],
+[3,"Jimmy (Originele Studio Versie)","Boudewijn de Groot"],
+[3,"Speeltijd","Niels Destadsbader"],
+[3,"Morregen","Belgian Asociality"],
+[3,"Louise","Kadril"],
+[3,"Heist Aan Zee","Bart Peeters"],
+[3,"Kind Van De Duivel","Jebroer"],
+[3,"Teken van leven","Mama's Jasje"],
+[3,"In De Fik","Flip Kowlier"],
+[3,"Anoniem","Eva De Roovere"],
+[3,"Arme Joe","Noordkaap"],
+[3,"Gelukkig zijn","Raymond Van Het Groenewoud"],
+[3,"Jij bent mijn Gigi","K3"],
+[3,"Zo ver, zo goed","Yevgueni"],
+[3,"Vanaf Nu Doe Ik Alles Wat Ik Wil","Hannelore Bedert"],
+[3,"Hier in Aaigem","Jan De Wilde"],
+[3,"Gie, Den Otto En Ik","Het Zesde Metaal"],
+[3,"Gorik Pt.1","Zwangere Guy"],
+[3,"Steentje","Brihang"],
+[3,"Hoe Het Danst","Marco Borsato"],
+[3,"Verdwenen vrienden","Frank Vander linden"],
+[3,"Badpak","Waar Is Ken?"],
+[3,"Voed mij op","Helmut Lotti"],
+[3,"Horizon","Tourist LeMC"],
+[3,"Zij is van mij","#LikeMe Cast"],
+
+[4,"Ergens Onderweg","De Mens"],
+[4,"Er Is Iets","Walter Verdin"],
+[4,"De wedstrijd","Bram Vermeulen"],
+[4,"Mama (No Wo Homme Hon?)","Flip Kowlier"],
+[4,"Trouw met mij","#LikeMe Cast"],
+[4,"Hotel Paradiso (Single Versie)","Luk Vankessel"],
+[4,"Horizon","Bløf"],
+[4,"Zeven Dagen Lang","Bots"],
+[4,"Hoe Kon Ik Zo Dom Zijn","5NAPBACK"],
+[4,"Kom Van Dat Dak Af","Peter Koelewijn"],
+[4,"Vilvoorde City","Kris De Bruyne"],
+[4,"Brussel","Liesbeth List"],
+[4,"Duizend Terrassen in Rome","Bart Kaell"],
+[4,"London Stansted","Buurman"],
+[4,"Nu Wij Niet Meer Praten","Jaap Reesema"],
+[4,"Diep","Get Ready!"],
+[4,"De Onverbiddelijke Zoener","Lamp, Lazarus En Kris"],
+[4,"Witte Nachten","Madou"],
+[4,"Marieke","Jacques Brel"],
+[4,"KUTJAAR","Zwangere Guy"],
+[4,"Malle Babbe","Rob De Nijs"],
+[4,"Dans van de farao","K3"],
+[4,"Allemaal Anders","Ronny Mosuse"],
+[4,"Denk Maar Niet Aan Morgen","Bazart"],
+[4,"In De Walszaal","Frank Vander linden"],
+[4,"Knolraap En Lof, Schorseneren En Prei","Drs. P"],
+[4,"Hey Pa","Niels Destadsbader"],
+[4,"Dat Ik Je Mis","Maaike Ouboter"],
+[4,"Vergeet De Tijd","Regi"],
+[4,"Een Tip Van De Sluier","Boudewijn de Groot"],
+
+[5,"Dodenrit","Drs. P"],
+[5,"Held","Free Souffriau"],
+[5,"Nee oh nee","De Kreuners"],
+[5,"Rozane","Wim De Craene"],
+[5,"Juf Van Fysica","Spring"],
+[5,"Wat Een Leven","Bent Van Looy"],
+[5,"Altijd Weer Tikt De Klok","Yasmine"],
+[5,"Ik voel me zo verdomd alleen (Live)","Cis de man"],
+[5,"Rode wijn","Bram Vermeulen"],
+[5,"Een Eigen Huis (Alles Kan Een Mens Gelukkig maken)","Het Goede Doel"],
+[5,"Heel Mijn Hart","Clouseau"],
+[5,"Ongewoon","Pommelien Thijs"],
+[5,"Het is zo lekker (Zonder zwart gemoed)","Raymond Van Het Groenewoud"],
+[5,"Pa","Doe Maar"],
+[5,"Neerhof","Lieven"],
+[5,"Een vriend zien huilen","Frank Vander linden"],
+[5,"Liefde is overal","K3"],
+[5,"Dat heb jij gedaan","MEAU"],
+[5,"Aan Alle Vrouwen","Jo Vally"],
+[5,"Holiday In Spain","Counting Crows"],
+[5,"Parijs, Berlijn, Madrid","Boudewijn de Groot"],
+[5,"Een Heel Klein Beetje Oorlog","Aafke Romeijn"],
+[5,"Brombeer","Bart Peeters"],
+[5,"1 Op Een Miljoen","Metejoor"],
+[5,"Da Besta Nie","Het Zesde Metaal"],
+[5,"Schone schijn","#LikeMe Cast"],
+[5,"Ze danst gewoon op straat","Yevgueni"],
+[5,"De Peulschil","Kris De Bruyne"],
+[5,"Onderweg","Bazart"],
+[5,"Blijven Slapen","Snelle"],
+
+[6,"Welkenraedt","Yevgueni"],
+[6,"vol","MEROL"],
+[6,"Warme dagen","Raymond Van Het Groenewoud"],
+[6,"Erop Of Eronder","Pommelien Thijs"],
+[6,"Harder Dan Ik Hebben Kan","Bløf"],
+[6,"Johnny Will Be King","Johannes Is Zijn Naam"],
+[6,"Tussen De Liefde En De Leegte","Stef Bos"],
+[6,"Door De Wind","Ingeborg"],
+[6,"XYZ","Camille"],
+[6,"Bel Me, Schrijf Me","Sandra Kim"],
+[6,"Het Land Van Maas En Waal","Boudewijn de Groot"],
+[6,"De Bom","Doe Maar"],
+[6,"Jennifer Jennings","Louis Neefs"],
+[6,"Tegenstrijd","Helmut Lotti"],
+[6,"Zeil Je Voor Het Eerst","Bart Kaell"],
+[6,"Licht Uit","The Opposites"],
+[6,"Te min voor Anja","Spring"],
+[6,"Zoals Je Bent","Isabelle A"],
+[6,"Rigoureus","The Scene"],
+[6,"Stilte Na De Storm (Live - Uit Liefde Voor Muziek)","Kommil Foo"],
+[6,"Brood voor Morgenvroeg","Bart Peeters"],
+[6,"Waar is de liefde?","De Mens"],
+[6,"Gek op jou","Clouseau"],
+[6,"Smalfilm","Spinvis"],
+[6,"Vleugels","K3"],
+[6,"Onbezonnen","Froukje"],
+[6,"Ik blijf bij jou","#LikeMe Cast"],
+[6,"Noodgeval","Goldband"],
+[6,"Laat Ons Een Bloem (uit Liefde Voor Muziek)","Metejoor"],
+[6,"Tid Van Ton","Het Zesde Metaal"],
+
+[7,"Draai Dan 797204","Will Tura"],
+[7,"Spijt","Meis"],
+[7,"Trek het je niet aan","Raymond Van Het Groenewoud"],
+[7,"Manzijn","Yevgueni"],
+[7,"Meisjes Aan De Macht","Yasmine"],
+[7,"Het Risico","Aarde aan Daan"],
+[7,"Brussel","Johan Verminnen"],
+[7,"Veel Te Mooi","Sanne"],
+[7,"Doris Day","Doe Maar"],
+[7,"Medeplichtig","Pommelien Thijs"],
+[7,"Abracadabra","Fabian"],
+[7,"Je Bent Thuis (Themasong van de TV-reeks THUIS)","Thuis"],
+[7,"Europapa","Joost"],
+[7,"Zachte Landing","MEROL"],
+[7,"Samen staan we sterk","#LikeMe Cast"],
+[7,"Geef Mij Alles","Bazart"],
+[7,"Als Een Leeuw In Een Kooi","Willy Sommers"],
+[7,"10.000 Luchtballonnen (uit Liefde Voor Muziek)","Metejoor"],
+[7,"Skwon Meiske","Niels & Wiels"],
+[7,"De Onvolledigen","Het Zesde Metaal"],
+[7,"De vriendschapsband","Xink"],
+[7,"Voor Jou (uit Liefde Voor Muziek)","Stef Bos"],
+[7,"Amor (uit Liefde Voor Muziek)","Clouseau"],
+[7,"Laat me alleen","Mama's Jasje"],
+[7,"De Oude Man En De Zee","Dana Winner"],
+[7,"Zilvermeer","Bart Peeters"],
+[7,"Blankenberge","Hugo Matthysen"],
+[7,"Jan zonder vrees","Spring"],
+[7,"Party Boy (Album Version)","Johannes Is Zijn Naam"],
+[7,"Ardennen doo-wop","De Nieuwe Snaar"],
+[7,"Offline","Froukje"],
+
+[8,"Brandweer","Clouseau"],
+[8,"Vaarwel Theo (Live)","Urbanus"],
+[8,"Zij heeft stijl","De Kreuners"],
+[8,"Geen Tranen Meer Over","Camille"],
+[8,"Waarom Ik","Helmut Lotti"],
+[8,"Je Geeft Me Niets","Aarde aan Daan"],
+[8,"Atlas","Pommelien Thijs"],
+[8,"Mama Ik Wil Papa","Yevgueni"],
+[8,"Kamer","Johannes Is Zijn Naam"],
+[8,"Bitterzoet","Eefje de Visser"],
+[8,"Helena","Hugo Raspoet"],
+[8,"Boeng - Boom (Uit Liefde Voor Muziek)","Gers Pardoel"],
+[8,"Met De Vlam In De Pijp","Henk Wijngaard"],
+[8,"Café zonder bier","Bobbejaan Schoepen"],
+[8,"abcdefu","BENR"],
+[8,"Applaus","MEROL"],
+[8,"Vergeet-mij-nietje","Leopold 3"],
+[8,"Zeester Met Koffie","Bart Peeters"],
+[8,"Zit Zat Zot","Jokke"],
+[8,"Dit is mijn huis","De Mens"],
+[8,"Min Moaten","Flip Kowlier"],
+[8,"Ik Wil Dat Je Liegt","Hannah Mae"],
+[8,"Eenzaam Is De Spits","Kommil Foo"],
+[8,"Lieve kleine piranha","Gorki"],
+[8,"Leef","Sam Bettens"],
+[8,"Zonder Gezicht","Froukje"],
+[8,"Eerste sneeuw","Jan De Wilde"],
+[8,"Stukje Van Mij","MEAU"],
+[8,"Vergeet Barbara","Will Tura"],
+[8,"Het Werd Zomer","Rob De Nijs"]
+];
+
+// Deezer track IDs, in the exact same order as RAW above.
+const TIDS = [
+14598053,130899462,61307116,13443919,13443922,13443927,13443928,66693222,13443932,13443918,13443914,83924525,83924545,83924559,83924583,83924661,83924671,83924699,3299116,2321568,15116353,127098849,16171376,16123864,136863932,36313081,74060699,3353328,61469750,98216664,
+75371876,2181976,2543416,41034181,130905216,14259495,125184254,1110640,79804232,13787215,78107069,75074733,4242287,3217846,405130192,143243250,76272330,79726496,9440568,81779672,3501441,25692511,3298457,13445308,95965474,2264098,372861431,5848481,3435111,15116370,
+60816550,414721062,74041403,120178790,11091747,425583642,2181977,106080650,3500881,469441932,3298456,3845209,36313181,396080522,664606152,81778704,115433810,135672082,2535894,3435106,1110641,14597936,81778406,445601522,405130122,95965462,65751439,13485550,77732752,13622649,
+857512252,901053032,999692902,13480131,108609516,372757971,2306054,720412962,3393809,9248188,512538802,346355811,13446574,65751443,1110644,910136642,13487707,774492142,779908962,445601532,13468590,89538253,1026710322,747880412,700721012,446435842,99181394,66907607,95965482,865370122,
+60816482,60816501,13480100,60816479,865370062,60816488,1285492922,60816493,1115095222,66118874,60816502,2307439,114519914,60816559,1097619522,3473438,60816505,60816508,2296861,1163517952,60816514,1115020582,60816525,1089350692,60816524,60816539,720412892,69918782,1083971262,2306060,
+639546262,81778450,1636810482,545990882,81779714,720400962,720424382,138214125,13480118,361397381,797368752,1660873792,3298571,35793901,3900463,3835934,412763132,1465896812,688519012,61247955,2317019,650213812,1422146682,1209789012,755784642,1644478092,1631765962,688571272,1505623602,1244972412,
+1446075452,1488182412,3299029,2279814627,61247941,1921928137,77732756,74783035,1862880847,1008509522,2527302,35793891,396373942,66907606,114253934,5422972,81779648,1701610577,2181978,669813502,405130162,1665201102,396080892,999200382,1975877007,1194025002,2163954517,1439585052,2270900497,755784652,
+15039029,2609742212,13487573,1446075462,125184256,2483890571,15116342,625562522,35793931,2532610481,61873044,2299283995,2668763592,2872616022,1651655092,2057978277,130059540,2214605517,142380663,755784702,3222258,2282233787,2738835081,3353322,13445290,1422146592,2170034127,81779676,2183923077,13485549,3585434201,
+2552667002,135923464,61469776,1804520177,2805839842,2972274581,3260294761,1446904072,2183923157,768504182,667082182,346643971,137468162,97288550,1627890042,2071195207,5848480,510173192,2670394562,3435102,1446469942,2804838212,686547162,61103100,68396252,1682701577,3500883,2627297282,1017244182,1768245827
+];
+
+const DATA = RAW.map((r,i)=>({
+  id:i,
+  p:PLAYLISTS[r[0]].name,
+  color:PLAYLISTS[r[0]].color,
+  pid:PLAYLISTS[r[0]].id,
+  t:r[1],
+  a:r[2],
+  tid:TIDS[i]
+}));
+
+const TOTAL = DATA.length;
+document.getElementById("count").textContent = TOTAL;
+document.querySelector(".stat .lbl").textContent = "van "+TOTAL+" nummers";
+
+const norm = s => s.toLowerCase()
+  .normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+
+// precompute normalized fields
+DATA.forEach(d=>{ d._p=norm(d.p); d._t=norm(d.t); d._a=norm(d.a); d._all=d._p+" "+d._t+" "+d._a; });
+
+const state = { q:"", f:{p:"",t:"",a:""}, sort:"n", dir:1 };
+
+const rowsEl = document.getElementById("rows");
+const emptyEl = document.getElementById("empty");
+const footEl = document.getElementById("foot");
+
+function highlight(text, term){
+  if(!term) return escapeHtml(text);
+  const nt = norm(text), nq = norm(term);
+  let out="", i=0;
+  while(true){
+    const idx = nt.indexOf(nq, i);
+    if(idx===-1){ out+=escapeHtml(text.slice(i)); break; }
+    out+=escapeHtml(text.slice(i,idx));
+    out+="<mark>"+escapeHtml(text.slice(idx, idx+term.length))+"</mark>";
+    i = idx+term.length;
+  }
+  return out;
+}
+function escapeHtml(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+function currentTerm(col){
+  // per-column filter takes precedence for highlighting; else global
+  return state.f[col] || state.q;
+}
+
+function apply(){
+  const q = norm(state.q);
+  const fp = norm(state.f.p), ft = norm(state.f.t), fa = norm(state.f.a);
+
+  let list = DATA.filter(d=>{
+    if(q && !d._all.includes(q)) return false;
+    if(fp && !d._p.includes(fp)) return false;
+    if(ft && !d._t.includes(ft)) return false;
+    if(fa && !d._a.includes(fa)) return false;
+    return true;
+  });
+
+  const s = state.sort, dir = state.dir;
+  if(s!=="n"){
+    list = list.slice().sort((a,b)=>{
+      const av=a["_"+s], bv=b["_"+s];
+      if(av<bv) return -1*dir;
+      if(av>bv) return 1*dir;
+      return a.id-b.id;
+    });
+  } else if(dir===-1){
+    list = list.slice().reverse();
+  }
+
+  render(list);
+}
+
+function render(list){
+  if(list.length===0){
+    rowsEl.innerHTML="";
+    emptyEl.hidden=false;
+  } else {
+    emptyEl.hidden=true;
+    const tp=currentTerm("p"), tt=currentTerm("t"), ta=currentTerm("a");
+    const html = list.map((d,i)=>(
+      "<tr>"+
+      "<td class='col-num'>"+(i+1)+"</td>"+
+      "<td><a class='chip' style='background:"+d.color+"' href='https://www.deezer.com/nl/playlist/"+d.pid+"' target='_blank' rel='noopener' title='Open playlist in Deezer'>"+highlight(d.p,tp)+"</a></td>"+
+      "<td class='t-title'><a class='tlink' href='https://www.deezer.com/nl/track/"+d.tid+"' target='_blank' rel='noopener' title='Speel af in Deezer'>"+highlight(d.t,tt)+"<span class='play'>▶</span></a></td>"+
+      "<td class='t-artist'>"+highlight(d.a,ta)+"</td>"+
+      "</tr>"
+    )).join("");
+    rowsEl.innerHTML=html;
+  }
+  document.getElementById("count").textContent = list.length;
+  const filtered = list.length!==TOTAL;
+  footEl.textContent = filtered
+    ? (list.length+" van "+TOTAL+" nummers · 9 playlists (2017–2025)")
+    : (TOTAL+" nummers · 9 playlists (2017–2025)");
+}
+
+// events
+const globalEl = document.getElementById("global");
+globalEl.addEventListener("input", e=>{ state.q=e.target.value; apply(); });
+
+document.querySelectorAll(".colfilter").forEach(inp=>{
+  inp.addEventListener("input", e=>{ state.f[e.target.dataset.col]=e.target.value; apply(); });
+});
+
+document.querySelectorAll(".th-inner").forEach(th=>{
+  th.addEventListener("click", ()=>{
+    const key=th.dataset.key;
+    if(state.sort===key){ state.dir*=-1; }
+    else { state.sort=key; state.dir=1; }
+    updateSortIndicators();
+    apply();
+  });
+});
+
+function updateSortIndicators(){
+  document.querySelectorAll("thead th").forEach(th=>th.classList.remove("sorted"));
+  document.querySelectorAll(".th-inner").forEach(el=>{
+    const arrow=el.querySelector(".arrow");
+    if(el.dataset.key===state.sort){
+      el.closest("th").classList.add("sorted");
+      arrow.textContent = state.dir===1 ? "▲" : "▼";
+    } else {
+      arrow.textContent="";
+    }
+  });
+}
+
+document.getElementById("clear").addEventListener("click", ()=>{
+  state.q=""; state.f={p:"",t:"",a:""}; state.sort="n"; state.dir=1;
+  globalEl.value="";
+  document.querySelectorAll(".colfilter").forEach(i=>i.value="");
+  updateSortIndicators();
+  apply();
+  globalEl.focus();
+});
+
+updateSortIndicators();
+apply();
+</script>
+</body>
+</html>
