@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -144,11 +143,11 @@
   <header class="masthead">
     <div class="title-block">
       <h1>Zomerplaylists</h1>
-      <p>Negen jaar Nederlandstalige zomer-roadtrips (2017&ndash;2025), samengevoegd tot één doorzoekbare lijst. Zoek in elke kolom apart, of gebruik het grote veld om alles tegelijk te doorzoeken.</p>
+      <p>Tien jaar Nederlandstalige zomer-roadtrips (2017&ndash;2026), samengevoegd tot één doorzoekbare lijst. Zoek in elke kolom apart, of gebruik het grote veld om alles tegelijk te doorzoeken.</p>
     </div>
     <div class="stat">
-      <div class="big" id="count">271</div>
-      <div class="lbl">van 271 nummers</div>
+      <div class="big" id="count">301</div>
+      <div class="lbl">van 301 nummers</div>
     </div>
   </header>
 
@@ -198,7 +197,8 @@ const PLAYLISTS = [
   {name:"Zomer2022.fr",     color:"#2E86C1", id:"10559525842"},
   {name:"Zomer2023.se",     color:"#17A0A0", id:"11565797184"},
   {name:"Zomer2024.fr",     color:"#3FA14B", id:"12959938463"},
-  {name:"Zomer2025.at",     color:"#97952B", id:"14132451861"}
+  {name:"Zomer2025.at",     color:"#97952B", id:"14132451861"},
+  {name:"Zomer2026.dk/se",  color:"#8B5E34", id:"15575745083"}
 ];
 
 // [playlistIndex, title, artist]
@@ -481,7 +481,38 @@ const RAW = [
 [8,"Eerste sneeuw","Jan De Wilde"],
 [8,"Stukje Van Mij","MEAU"],
 [8,"Vergeet Barbara","Will Tura"],
-[8,"Het Werd Zomer","Rob De Nijs"]
+[8,"Het Werd Zomer","Rob De Nijs"],
+
+[9,"Ben ier weg","'T Hof Van Commerce"],
+[9,"Een Vriend '92","Margriet Hermans"],
+[9,"Satelliet Suzy","Noordkaap"],
+[9,"Gewoon Maar Mijn Zin","Bart Van Den Bossche"],
+[9,"EGOTRIP","Aaron Blommaert"],
+[9,"Vergis ik mij","Roosbeef"],
+[9,"1-2-3 Rikke Tikke Tik","Urbanus"],
+[9,"Een vrolijk lentelied","Jan De Wilde"],
+[9,"Brandgevaar","Lotte De Clerck"],
+[9,"Niets is Voor Altijd (Madou Original Version Remastered)","Madou"],
+[9,"Ga Niet Weg","Ingeborg"],
+[9,"Zomernacht","Leopold 3"],
+[9,"Het leven moet een wals zijn","Stef Bos"],
+[9,"Naïef","Meltheads"],
+[9,"Angst Is Maar Voor Even (Live)","Kommil Foo"],
+[9,"Zwaai Als Je Verliefd Bent","K3"],
+[9,"Luchtballon","Joost"],
+[9,"Er Is Er Geen Één Zoals Jij","Bart Peeters"],
+[9,"Van God Los","Bazart"],
+[9,"De Zotte Morgen","Zjef Vanuytsel"],
+[9,"Ik Ga Dood Aan Jou","Bart Herman"],
+[9,"Cassandra","Pommelien Thijs"],
+[9,"Dans Op Het Mes","Jet van der Steen"],
+[9,"Elisa","Yevgueni"],
+[9,"Service","Het Zesde Metaal"],
+[9,"Zeven Anjers Zeven Rozen","Willy Sommers"],
+[9,"Blank Of Zwart","Isabelle A"],
+[9,"LOIN D'ICI (from “PUTAIN”)","Zwangere Guy"],
+[9,"Utrecht","BENR"],
+[9,"Mary-Lou","Clouseau"]
 ];
 
 // Deezer track IDs, in the exact same order as RAW above.
@@ -494,7 +525,8 @@ const TIDS = [
 639546262,81778450,1636810482,545990882,81779714,720400962,720424382,138214125,13480118,361397381,797368752,1660873792,3298571,35793901,3900463,3835934,412763132,1465896812,688519012,61247955,2317019,650213812,1422146682,1209789012,755784642,1644478092,1631765962,688571272,1505623602,1244972412,
 1446075452,1488182412,3299029,2279814627,61247941,1921928137,77732756,74783035,1862880847,1008509522,2527302,35793891,396373942,66907606,114253934,5422972,81779648,1701610577,2181978,669813502,405130162,1665201102,396080892,999200382,1975877007,1194025002,2163954517,1439585052,2270900497,755784652,
 15039029,2609742212,13487573,1446075462,125184256,2483890571,15116342,625562522,35793931,2532610481,61873044,2299283995,2668763592,2872616022,1651655092,2057978277,130059540,2214605517,142380663,755784702,3222258,2282233787,2738835081,3353322,13445290,1422146592,2170034127,81779676,2183923077,13485549,3585434201,
-2552667002,135923464,61469776,1804520177,2805839842,2972274581,3260294761,1446904072,2183923157,768504182,667082182,346643971,137468162,97288550,1627890042,2071195207,5848480,510173192,2670394562,3435102,1446469942,2804838212,686547162,61103100,68396252,1682701577,3500883,2627297282,1017244182,1768245827
+2552667002,135923464,61469776,1804520177,2805839842,2972274581,3260294761,1446904072,2183923157,768504182,667082182,346643971,137468162,97288550,1627890042,2071195207,5848480,510173192,2670394562,3435102,1446469942,2804838212,686547162,61103100,68396252,1682701577,3500883,2627297282,1017244182,1768245827,
+3728770752,2264096,98036488,2188959647,4008595181,1861402387,2543423,3500882,2266037137,447008022,2552515902,5848479,3299725431,2664354022,679916942,81778740,2827408082,532166502,1897870287,72290789,134888256,3482261771,2495018811,1446416952,3529931241,2535144,432957692,3092828941,1562445282,3122413191
 ];
 
 const DATA = RAW.map((r,i)=>({
@@ -590,8 +622,8 @@ function render(list){
   document.getElementById("count").textContent = list.length;
   const filtered = list.length!==TOTAL;
   footEl.textContent = filtered
-    ? (list.length+" van "+TOTAL+" nummers · 9 playlists (2017–2025)")
-    : (TOTAL+" nummers · 9 playlists (2017–2025)");
+    ? (list.length+" van "+TOTAL+" nummers · 10 playlists (2017–2026)")
+    : (TOTAL+" nummers · 10 playlists (2017–2026)");
 }
 
 // events
