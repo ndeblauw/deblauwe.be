@@ -4,7 +4,9 @@
     'heading' => null,
 ])
 
-<?php if ($expandable && $heading): ?>
+@php
+    if ($expandable && $heading):
+@endphp
 
 <details {{ $attributes->class('group/disclosure grid') }} {{ $expanded ? 'open' : '' }}>
     <summary class="mb-[2px] flex h-10 w-full items-center rounded-lg text-gray-500 cursor-default hover:bg-gray-800/5 hover:text-gray-800 lg:h-8 dark:text-white/80 dark:hover:bg-white/[7%] dark:hover:text-white">
@@ -20,7 +22,9 @@
     </div>
 </details>
 
-<?php elseif ($heading): ?>
+@php
+    elseif ($heading):
+@endphp
 
 <div {{ $attributes->class('grid space-y-[2px]') }}>
     <div class="px-1 py-2">
@@ -31,10 +35,14 @@
     </div>
 </div>
 
-<?php else: ?>
+@php
+    else:
+@endphp
 
 <div {{ $attributes->class('block space-y-[2px]') }}>
     {{ $slot }}
 </div>
 
-<?php endif; ?>
+@php
+    endif
+@endphp
